@@ -1,0 +1,8 @@
+* text=auto
+
+*.lock -diff
+*.min.js -diff
+*.min.css -diff
+
+/.github export-ignore
+CHANGELOG.md export-ignore

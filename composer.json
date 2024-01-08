@@ -1,0 +1,51 @@
+{
+    "name": "open-southeners/packagist_package_here",
+    "description": "and_description_here",
+    "license": "MIT",
+    "keywords": [
+        "open-southeners"
+    ],
+    "authors": [
+        {
+            "name": "Ruben Robles",
+            "email": "me@d8vjork.com",
+            "homepage": "https://d8vjork.com"
+        }
+    ],
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/open-southeners"
+        }
+    ],
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^2.0",
+        "orchestra/testbench": "^7.0 || ^8.0",
+        "phpstan/phpstan": "^1.0",
+        "phpunit/phpunit": "^9.0 || ^10.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "OpenSoutheners\\PhpPackage\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OpenSoutheners\\PhpPackage\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "OpenSoutheners\\PhpPackage\\ServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,8 @@
+/vendor/
+/node_modules
+composer.lock
+phpunit.xml
+.DS_Store
+coverage
+clover.xml
+.phpunit.cache
