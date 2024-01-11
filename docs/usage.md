@@ -6,11 +6,11 @@ description: Usage of companion applications within your application
 
 This package allows you to add the following features to your Laravel application:
 
-* Smart banner (Apple only for now),&#x20;
+* Show [smart banners](usage.md#adding-smart-banner) to users when navigating using a mobile device (Apple only for now).
 * Universal links (Apple only) which uses the current page path (URL) to continue navigation through the application when smart banner is used (**meta tag must be injected to the HTML header**)
-* App links which lets you **redirect users from your Laravel app to any native application** installed on the user device or, optionally, **to the store if none was found**.
-* Show app stores banners with links to your registered applications.
-* Generate app links verification files and [web app manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest).
+* [App links](usage.md#redirect-users-to-mobile-apps) which lets you **redirect users from your Laravel app to any native application** installed on the user device or, optionally, **to the store if none was found**.
+* [Show app stores badge images with links](usage.md#getting-store-banner-html) to your registered applications.
+* [Generate app links verification files](usage.md#generate-files) and [web app manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest).
 
 ## Generate files
 
@@ -35,6 +35,50 @@ And at the end will ask for generate a manifest.json for your Laravel web app wh
 At the end you should have the following files on your public folder (this also configurable through `config/companion.php`):
 
 <figure><img src=".gitbook/assets/image.png" alt="" width="375"><figcaption></figcaption></figure>
+
+## Redirect users to mobile apps
+
+With the previous step generating the files required for your applications to be verified you can now redirect users from your website to these mobile apps if they have them installed.
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+
+class UserController extends Controller
+{
+    public function show(User $user): RedirectResponse
+    {
+        return redirect()->toApp(Companion::android('com.example'), "users/{$user->id}");
+    }
+}
+```
+
+You can also add a fallback to these redirects in case the user does not have any application installed:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+
+class UserController extends Controller
+{
+    public function show(User $user): RedirectResponse
+    {
+        return redirect()->toApp(
+            Companion::android('com.example'),
+            "users/{$user->id}",
+            'https://my_laravel_app.com/our_apps'
+        );
+    }
+}
+```
 
 ## Adding smart banner
 
