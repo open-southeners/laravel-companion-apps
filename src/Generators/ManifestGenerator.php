@@ -2,9 +2,10 @@
 
 namespace OpenSoutheners\LaravelCompanionApps\Generators;
 
-use OpenSoutheners\LaravelCompanionApps\Companion;
-use OpenSoutheners\LaravelCompanionApps\Manager;
+use Illuminate\Support\Collection;
+use OpenSoutheners\LaravelCompanionApps\CompanionApplication;
 use OpenSoutheners\LaravelCompanionApps\Platform;
+use OpenSoutheners\LaravelCompanionApps\Support\Facades\Companion;
 
 class ManifestGenerator
 {
@@ -39,7 +40,7 @@ class ManifestGenerator
         $content['prefer_related_applications'] = $this->options['prefer_related_applications'] ?? false;
 
         if ($this->options['related_applications'] ?? false) {
-            $content['related_applications'] = collect(Manager::apps())->map(function (Companion $app) {
+            $content['related_applications'] = Collection::make(Companion::list())->map(function (CompanionApplication $app) {
                 $appData = [
                     'platform' => $app->getPlatformStore(),
                     'url' => $app->getStoreLink(),

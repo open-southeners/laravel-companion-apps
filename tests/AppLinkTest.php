@@ -3,14 +3,14 @@
 namespace OpenSoutheners\LaravelCompanionApps\Tests;
 
 use OpenSoutheners\LaravelCompanionApps\AppLink;
-use OpenSoutheners\LaravelCompanionApps\Companion;
+use OpenSoutheners\LaravelCompanionApps\CompanionApplication;
 use OpenSoutheners\LaravelCompanionApps\Platform;
 
 class AppLinkTest extends TestCase
 {
     public function test_app_link_intent_fallback_url_gets_appended()
     {
-        $app = Companion::make('com.example', Platform::Android);
+        $app = CompanionApplication::make('com.example', Platform::Android);
 
         $appLink = new AppLink($app, 'example');
 

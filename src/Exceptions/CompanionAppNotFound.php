@@ -7,7 +7,7 @@ use RuntimeException;
 
 class CompanionAppNotFound extends RuntimeException
 {
-    public static function forPlatform(string $app, Platform $platform)
+    public static function forPlatform(string $app, Platform $platform): self
     {
         return new self("'{$app}' not found in registered list of {$platform->name} companion apps");
     }

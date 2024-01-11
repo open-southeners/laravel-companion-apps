@@ -29,7 +29,6 @@ final class AppleAppSiteAssociationGenerator
         ];
 
         foreach ($this->apps as $appID => $paths) {
-            $paths = (array) $paths;
             $appLinksArr['details'][] = compact('appID', 'paths');
         }
 

@@ -5,7 +5,7 @@ namespace OpenSoutheners\LaravelCompanionApps;
 class AppLink
 {
     public function __construct(
-        public readonly Companion $app,
+        public readonly CompanionApplication $app,
         public readonly string $scheme
     ) {
         //

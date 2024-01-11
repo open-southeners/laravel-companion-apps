@@ -2,10 +2,14 @@
 
 namespace OpenSoutheners\LaravelCompanionApps\Generators;
 
-use OpenSoutheners\LaravelCompanionApps\Companion;
+use OpenSoutheners\LaravelCompanionApps\CompanionApplication;
 
 final class AssetLinksGenerator
 {
+    /**
+     * @param array<\OpenSoutheners\LaravelCompanionApps\CompanionApplication> $apps
+     * @param array<string, array<string>> $fingerprints
+     */
     public function __construct(
         protected readonly array $apps,
         protected readonly array $fingerprints = []
@@ -18,7 +22,7 @@ final class AssetLinksGenerator
      * 
      * @return array<string, array>
      */
-    private function assetLinkFor(Companion $app): array
+    private function assetLinkFor(CompanionApplication $app): array
     {
         $appName = $app->getName();
 
@@ -35,7 +39,7 @@ final class AssetLinksGenerator
     /**
      * Generate array with file contents structure.
      * 
-     * @return array<string, array>
+     * @return array<array<string, array>>
      */
     final public function generate(): array
     {

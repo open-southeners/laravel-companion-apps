@@ -3,6 +3,7 @@
 namespace OpenSoutheners\LaravelCompanionApps;
 
 use Jenssegers\Agent\Facades\Agent;
+use OpenSoutheners\LaravelCompanionApps\Support\Facades\Companion;
 
 /**
  * @mixin \Illuminate\Routing\Redirector
@@ -14,12 +15,12 @@ class Redirector
         /**
          * Redirect to companion app's internal link.
          * 
-         * @param \OpenSoutheners\LaravelCompanionApps\Companion|string $app
+         * @param \OpenSoutheners\LaravelCompanionApps\CompanionApplication|string $app
          * @param string $path
          * @param string|null $fallbackTo
          * @return \Illuminate\Http\RedirectResponse
          */
-        return function (Companion|string $app, string $path, ?string $fallbackTo = null) {
+        return function (CompanionApplication|string $app, string $path, ?string $fallbackTo = null) {
             if (is_string($app)) {
                 return match (true) {
                     Agent::isAndroidOS() => $this->toApp(Companion::android($app), $path, $fallbackTo),

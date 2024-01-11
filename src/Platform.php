@@ -1,6 +1,7 @@
 <?php
 
 namespace OpenSoutheners\LaravelCompanionApps;
+
 use ReflectionEnumUnitCase;
 
 enum Platform
@@ -18,11 +19,10 @@ enum Platform
     {
         $reflection = new ReflectionEnumUnitCase($this, $this->name);
 
-        /**
-         * @var array<\ReflectionAttribute<\OpenSoutheners\LaravelCompanionApps\PlatformStore>>
-         */
+        /** @var array<\ReflectionAttribute<\OpenSoutheners\LaravelCompanionApps\PlatformStore>> $reflectionAttributes */
         $reflectionAttributes = $reflection->getAttributes(PlatformStore::class);
-
+        
+        /** @var \ReflectionAttribute<\OpenSoutheners\LaravelCompanionApps\PlatformStore> $platformStoreAttribute */
         $platformStoreAttribute = reset($reflectionAttributes);
 
         return $platformStoreAttribute->newInstance()->store;

@@ -19,4 +19,12 @@ abstract class TestCase extends Orchestra
             ServiceProvider::class,
         ];
     }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Empty all registered applications from tests before
+        ServiceProvider::$registeredCompanionApps = [];
+    }
 }

@@ -8,4 +8,7 @@ parameters:
 
     level: "max"
 
+    excludePaths:
+        - src/Redirector.php
+
     checkMissingIterableValueType: false

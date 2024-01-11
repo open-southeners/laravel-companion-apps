@@ -4,14 +4,14 @@ namespace OpenSoutheners\LaravelCompanionApps;
 
 use Illuminate\Support\Facades\URL;
 
-class Companion
+class CompanionApplication
 {
     /**
      * @param  \OpenSoutheners\LaravelCompanionApps\Platform  $platform
      * @param  \OpenSoutheners\LaravelCompanionApps\AppLink|null  $appLink
      * @param  string|null  $storeId App Store's ID (only iOS)
      * @param  string|null  $storeSlug App Store's slug (only iOS)
-     * @param  string|null  $storeRegion Application store's region
+     * @param  string|null  $storeRegion Application store's region (locale)
      */
     public function __construct(
         protected readonly string $name,
@@ -22,30 +22,6 @@ class Companion
         protected ?AppLink $appLink = null
     ) {
         //
-    }
-
-    /**
-     * Find Android application using name.
-     */
-    public static function android(string $name): self
-    {
-        return Manager::applicationsByPlatform(Platform::Android, $name);
-    }
-
-    /**
-     * Find Apple application using name.
-     */
-    public static function apple(string $name): self
-    {
-        return Manager::applicationsByPlatform(Platform::Apple, $name);
-    }
-
-    /**
-     * Find web application using name.
-     */
-    public static function web(string $name): self
-    {
-        return Manager::applicationsByPlatform(Platform::Web, $name);
     }
 
     /**
@@ -105,8 +81,12 @@ class Companion
     /**
      * Get app link intent to given path.
      */
-    public function link(string $path): AppLinkIntent
+    public function link(string $path): ?AppLinkIntent
     {
+        if (! $this->supportsLinks() || ! $this->appLink) {
+            return null;
+        }
+
         return $this->appLink->getIntent($path);
     }
 
@@ -115,7 +95,10 @@ class Companion
      */
     private function storeRegion(): string
     {
-        return $this->storeRegion ?: app()->getLocale();
+        /** @var string $storeRegionFallback */
+        $storeRegionFallback = config('companion.store.region', app()->getLocale());
+
+        return $this->storeRegion ?? $storeRegionFallback;
     }
 
     /**
@@ -151,6 +134,17 @@ class Companion
     }
 
     /**
+     * Get App Store's (Apple) badge image URL.
+     */
+    private function getAppStoreBadgeImgUrl(): string
+    {
+        /** @var string $appStoreBadgeUrl */
+        $appStoreBadgeUrl = config('companion.store.apple_badge_url', 'https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg');
+
+        return str_replace('{region}', $this->storeRegion(), $appStoreBadgeUrl);
+    }
+
+    /**
      * Get application store HTML badge image with link to the store.
      */
     public function getStoreBadgeHtml(int $width = 180, string $alt = ''): string
@@ -164,8 +158,8 @@ class Companion
 
         return match ($this->getPlatformStore()) {
             'play' => "<a target=\"_blank\" href=\"{$this->getStoreLink()}\"><img src=\"https://play.google.com/intl/en_us/badges/static/images/badges/{$this->storeRegion()}_badge_web_generic.png\"{$imgExtraAttributesStr} /></a>",
-            // TODO: Need to add option for badge image url/path
-            // 'itunes' => "<a target=\"_blank\" href=\"{$this->getStoreLink()}\"><img src=\"https://play.google.com/intl/en_us/badges/static/images/badges/{$this->storeRegion()}_badge_web_generic.png\" /></a>",
+            'itunes' => "<a target=\"_blank\" href=\"{$this->getStoreLink()}\"><img src=\"{$this->getAppStoreBadgeImgUrl()}\"{$imgExtraAttributesStr} /></a>",
+            default => '',
         };
     }
 }
