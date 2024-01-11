@@ -113,16 +113,15 @@ class GenerateCommand extends Command
 
     protected function assetLinksFile(): void
     {
-        $apps = [];
+        /** @var array<string, \OpenSoutheners\LaravelCompanionApps\CompanionApplication> $apps */
+        $apps = Companion::listByPlatform(Platform::Android);
         $fingerprints = [];
 
-        foreach (Companion::listByPlatform(Platform::Android) as $app) {
-            $fingerprints[$app->getName()] = explode(',', text(
-                label: "Introduce comma separated list of SHA2 fingerprints for your Android app ({$app->getName()})",
+        foreach ($apps as $name => $app) {
+            $fingerprints[$name] = explode(',', text(
+                label: "Introduce comma separated list of SHA2 fingerprints for your Android app ({$name})",
                 required: true
             ));
-
-            $apps[] = $app;
         }
 
         $generator = new AssetLinksGenerator($apps, $fingerprints);
@@ -135,16 +134,17 @@ class GenerateCommand extends Command
      */
     protected function appleAppSiteAssociationFile(): void
     {
-        $apps = [];
+        $apps = Companion::listByPlatform(Platform::Apple);
+        $appPathsArr = [];
 
-        foreach (Companion::listByPlatform(Platform::Apple) as $app) {
-            $apps[$app->getName()] = explode(',', text(
-                label: "Comma separated associated paths to site for Apple's application ({$app->getName()})",
+        foreach ($apps as $name => $app) {
+            $appPathsArr[$name] = explode(',', text(
+                label: "Comma separated associated paths to site for Apple's application ({$name})",
                 required: true
             ));
         }
 
-        $generator = new AppleAppSiteAssociationGenerator($apps);
+        $generator = new AppleAppSiteAssociationGenerator($appPathsArr);
 
         $this->files[config('companion.files.base_path', 'public').'/.well-known/apple-app-site-association'] = $generator->generate();
     }

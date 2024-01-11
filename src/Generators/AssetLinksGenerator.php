@@ -7,7 +7,7 @@ use OpenSoutheners\LaravelCompanionApps\CompanionApplication;
 final class AssetLinksGenerator
 {
     /**
-     * @param array<\OpenSoutheners\LaravelCompanionApps\CompanionApplication> $apps
+     * @param array<string, \OpenSoutheners\LaravelCompanionApps\CompanionApplication> $apps
      * @param array<string, array<string>> $fingerprints
      */
     public function __construct(
