@@ -22,15 +22,22 @@
     ],
     "require": {
         "php": "^8.1",
-        "jenssegers/agent": "^2.6",
         "illuminate/support": "^10.0",
+        "jenssegers/agent": "^2.6",
         "laravel/prompts": "^0.1"
     },
     "require-dev": {
         "larastan/larastan": "^2.0",
+        "laravel/facade-documenter": "dev-main",
         "orchestra/testbench": "^8.0",
         "phpstan/phpstan": "^1.0",
         "phpunit/phpunit": "^10.0"
+    },
+    "repositories": {
+        "facade-documenter": {
+            "type": "vcs",
+            "url": "git@github.com:laravel/facade-documenter.git"
+        }
     },
     "minimum-stability": "stable",
     "autoload": {
