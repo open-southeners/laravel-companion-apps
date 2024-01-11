@@ -23,14 +23,14 @@
     "require": {
         "php": "^8.1",
         "jenssegers/agent": "^2.6",
-        "illuminate/support": "^9.0 || ^10.0",
+        "illuminate/support": "^10.0",
         "laravel/prompts": "^0.1"
     },
     "require-dev": {
         "larastan/larastan": "^2.0",
-        "orchestra/testbench": "^7.0 || ^8.0",
+        "orchestra/testbench": "^8.0",
         "phpstan/phpstan": "^1.0",
-        "phpunit/phpunit": "^9.0 || ^10.0"
+        "phpunit/phpunit": "^10.0"
     },
     "minimum-stability": "stable",
     "autoload": {
