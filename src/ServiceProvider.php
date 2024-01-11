@@ -24,7 +24,11 @@ class ServiceProvider extends BaseServiceProvider
     {
         \Illuminate\Routing\Redirector::mixin(new Redirector);
 
-        $this->app->bind('companion', fn () => new Companion);
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/companion.php' => config_path('companion.php'),
+            ], 'config');
+        }
 
         Blade::directive('companionMetaTags', function (Application $app): string {
             return $app->make('companion')->metaTags();
@@ -36,6 +40,8 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind('companion', fn () => new Companion);
+
         $this->commands([
             Commands\GenerateCommand::class,
         ]);
