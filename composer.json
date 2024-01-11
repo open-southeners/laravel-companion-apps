@@ -1,9 +1,11 @@
 {
-    "name": "open-southeners/packagist_package_here",
-    "description": "and_description_here",
+    "name": "open-southeners/laravel-companion-apps",
+    "description": "Extend your Laravel applications with companions apps (Android, iOS, PWA...)",
     "license": "MIT",
     "keywords": [
-        "open-southeners"
+        "open-southeners",
+        "companion-apps",
+        "laravel-mobile"
     ],
     "authors": [
         {
@@ -19,7 +21,9 @@
         }
     ],
     "require": {
-        "php": "^8.0"
+        "php": "^8.1",
+        "jenssegers/agent": "^2.6",
+        "laravel/prompts": "^0.1"
     },
     "require-dev": {
         "larastan/larastan": "^2.0",
@@ -27,15 +31,15 @@
         "phpstan/phpstan": "^1.0",
         "phpunit/phpunit": "^9.0 || ^10.0"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "OpenSoutheners\\PhpPackage\\": "src"
+            "OpenSoutheners\\LaravelCompanionApps\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "OpenSoutheners\\PhpPackage\\Tests\\": "tests"
+            "OpenSoutheners\\LaravelCompanionApps\\Tests\\": "tests"
         }
     },
     "config": {
@@ -44,7 +48,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "OpenSoutheners\\PhpPackage\\ServiceProvider"
+                "OpenSoutheners\\LaravelCompanionApps\\ServiceProvider"
             ]
         }
     }

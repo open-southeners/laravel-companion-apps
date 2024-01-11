@@ -1,23 +1,28 @@
-title_goes_here [![required php version](https://img.shields.io/packagist/php-v/open-southeners/packagist_package_here)](https://www.php.net/supported-versions.php) [![codecov](https://codecov.io/gh/open-southeners/packagist_package_here/branch/main/graph/badge.svg?token=codecov_badge_token)](https://codecov.io/gh/open-southeners/packagist_package_here) [![Edit on VSCode online](https://img.shields.io/badge/vscode-edit%20online-blue?logo=visualstudiocode)](https://vscode.dev/github/open-southeners/packagist_package_here)
+Laravel Companion Apps [![required php version](https://img.shields.io/packagist/php-v/open-southeners/laravel-companion-apps)](https://www.php.net/supported-versions.php) [![codecov](https://codecov.io/gh/open-southeners/laravel-companion-apps/branch/main/graph/badge.svg?token=codecov_badge_token)](https://codecov.io/gh/open-southeners/laravel-companion-apps) [![Edit on VSCode online](https://img.shields.io/badge/vscode-edit%20online-blue?logo=visualstudiocode)](https://vscode.dev/github/open-southeners/laravel-companion-apps)
 ===
 
-and_description_here
+Extend your Laravel applications with companions apps (Android, Apple, Progressive Web Applications...).
 
-**Search & replace:**
+## Key features
 
-| Keys                                                      | Replacement                                                   |
-| --------------------------------------------------------- | ------------------------------------------------------------- |
-| `title_goes_here`                                         | Fancy title from the repository (only README and stuff)       |
-| `and_description_here`                                    | Short package description (only for README and composer.json) |
-| `packagist_package_here`                                  | Packagist (composer) published package name                   |
-| `codecov_badge_token`                                           | Codecov token for the coverage badge                          |
-| `OpenSoutheners\PhpPackage`, `OpenSoutheners\\PhpPackage` | PSR-0 and PSR-4 complaint package namespace                   |
+- Allow app links (also called [deep links](https://developer.android.com/training/app-links)) on Android apps:
+    - Generates the `.well-known/assetlinks.json` file for app links verification
+    - Redirects to app links (`redirect()->toApp(Companion::android('com.my_company.my_app'), 'products/1')` or `Companion::android('com.my_company.my_app')->redirect('products/1')`)
+    - Generates app links (`Companion::android('com.my_company.my_app')->link('products/1')`)
+- Allow app links (also called [universal links](https://developer.apple.com/documentation/xcode/supporting-universal-links-in-your-app)) on iOS apps:
+    - Generates the `apple-app-site-association` file for app links verification
+    - Redirects to app links (`redirect()->toApp(Companion::ios('com.my_company.my_app'))` or `Companion::ios('com.my_company.my_app')->redirect('products/1')`)
+    - Generates app links (`Companion::ios('com.my_company.my_app')->link('products/1')->fallbackToStore()`)
 
 ## Getting started
 
+```bash
+composer require open-southeners/laravel-companion-apps
 ```
-composer require open-southeners/packagist_package_here
-```
+
+## Documentation
+
+To learn how to use everything you should check the [official documentation](https://docs.opensoutheners.com/laravel-companion-apps).
 
 ## Partners
 
