@@ -2,6 +2,7 @@
 
 namespace OpenSoutheners\LaravelCompanionApps;
 
+use chillerlan\QRCode\QRCode;
 use Illuminate\Support\Facades\URL;
 
 class CompanionApplication
@@ -161,5 +162,13 @@ class CompanionApplication
             'itunes' => "<a target=\"_blank\" href=\"{$this->getStoreLink()}\"><img src=\"{$this->getAppStoreBadgeImgUrl()}\"{$imgExtraAttributesStr} /></a>",
             default => '',
         };
+    }
+
+    /**
+     * Get application store link as QR code.
+     */
+    public function getStoreQrCode(): string
+    {
+        return (new QRCode())->render($this->getStoreLink());
     }
 }

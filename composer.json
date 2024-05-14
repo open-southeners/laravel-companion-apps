@@ -22,6 +22,7 @@
     ],
     "require": {
         "php": "^8.1",
+        "chillerlan/php-qrcode": "^5.0",
         "illuminate/support": "^10.0",
         "jenssegers/agent": "^2.6",
         "laravel/prompts": "^0.1"
