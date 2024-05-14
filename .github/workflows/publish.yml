@@ -13,7 +13,7 @@ jobs:
 
       - name: Get release info
         id: query-release-info
-        uses: release-flow/keep-a-changelog-action@v2
+        uses: release-flow/keep-a-changelog-action@v3
         with:
           command: query
           version: latest
