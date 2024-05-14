@@ -97,7 +97,7 @@ class CompanionApplication
     private function storeRegion(): string
     {
         /** @var string $storeRegionFallback */
-        $storeRegionFallback = config('companion.store.region', app()->getLocale());
+        $storeRegionFallback = config('companion.store.region') ?? app()->getLocale();
 
         return $this->storeRegion ?? $storeRegionFallback;
     }
@@ -135,12 +135,14 @@ class CompanionApplication
     }
 
     /**
-     * Get App Store's (Apple) badge image URL.
+     * Get application store badge image URL.
      */
-    private function getAppStoreBadgeImgUrl(): string
+    public function getStoreBadgeImgUrl(): string
     {
+        $platform = strtolower($this->getPlatform());
+
         /** @var string $appStoreBadgeUrl */
-        $appStoreBadgeUrl = config('companion.store.apple_badge_url', 'https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg');
+        $appStoreBadgeUrl = config("companion.store.{$platform}_badge_url");
 
         return str_replace('{region}', $this->storeRegion(), $appStoreBadgeUrl);
     }
@@ -157,9 +159,11 @@ class CompanionApplication
             $imgExtraAttributesStr .= " {$attribute}=\"{$value}\"";
         }
 
+        $baseHtml = '<a target="_blank" href="%s"><img src="%s"%s /></a>';
+
         return match ($this->getPlatformStore()) {
-            'play' => "<a target=\"_blank\" href=\"{$this->getStoreLink()}\"><img src=\"https://play.google.com/intl/en_us/badges/static/images/badges/{$this->storeRegion()}_badge_web_generic.png\"{$imgExtraAttributesStr} /></a>",
-            'itunes' => "<a target=\"_blank\" href=\"{$this->getStoreLink()}\"><img src=\"{$this->getAppStoreBadgeImgUrl()}\"{$imgExtraAttributesStr} /></a>",
+            'play' => sprintf($baseHtml, $this->getStoreLink(), $this->getStoreBadgeImgUrl(), $imgExtraAttributesStr),
+            'itunes' => sprintf($baseHtml, $this->getStoreLink(), $this->getStoreBadgeImgUrl(), $imgExtraAttributesStr),
             default => '',
         };
     }

@@ -12,8 +12,15 @@ class CompanionApplicationTest extends TestCase
 {
     public function test_companion_supports_links()
     {
-        $this->assertFalse(CompanionApplication::make('com.example', Platform::Android)->supportsLinks());
-        $this->assertTrue(CompanionApplication::make('com.example', Platform::Android)->linkScheme('test')->supportsLinks());
+        $this->assertFalse(
+            CompanionApplication::make('com.example', Platform::Android)->supportsLinks()
+        );
+
+        $this->assertTrue(
+            CompanionApplication::make('com.example', Platform::Android)
+                ->linkScheme('test')
+                ->supportsLinks()
+        );
     }
 
     public function test_companion_app_link_redirects()
@@ -49,10 +56,16 @@ class CompanionApplicationTest extends TestCase
         ]);
 
         Route::get('/', function () {
-            return Companion::android('com.example')->link('foo/bar')->fallbackUrl('https://google.com');
+            return Companion::android('com.example')
+                ->link('foo/bar')
+                ->fallbackUrl('https://google.com');
         });
 
-        $this->get('/')->assertRedirect((string) Companion::android('com.example')->link('foo/bar')->fallbackUrl('https://google.com'));
+        $this->get('/')->assertRedirect(
+            (string) Companion::android('com.example')
+                ->link('foo/bar')
+                ->fallbackUrl('https://google.com')
+        );
     }
 
     public function test_companion_app_get_store_platform()
@@ -77,7 +90,7 @@ class CompanionApplicationTest extends TestCase
         );
     }
 
-    public function test_companion_app_get_store_badge_html()
+    public function test_companion_app_get_store_badge_htmlaa()
     {
         $this->assertEquals(
             '<a target="_blank" href="https://play.google.com/store/apps/details?id=com.example"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="180" alt="" /></a>',
@@ -89,7 +102,9 @@ class CompanionApplicationTest extends TestCase
     {
         $this->assertEquals(
             '<a target="_blank" href="https://play.google.com/store/apps/details?id=com.example"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/es_badge_web_generic.png" width="180" alt="" /></a>',
-            CompanionApplication::make('com.example', Platform::Android)->setStoreOptions(region: 'es')->getStoreBadgeHtml()
+            CompanionApplication::make('com.example', Platform::Android)
+                ->setStoreOptions(region: 'es')
+                ->getStoreBadgeHtml()
         );
     }
 
@@ -97,7 +112,9 @@ class CompanionApplicationTest extends TestCase
     {
         $this->assertEquals(
             '<a target="_blank" href="https://play.google.com/store/apps/details?id=com.example"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="240" alt="download_my_app" /></a>',
-            CompanionApplication::make('com.example', Platform::Android)->getStoreBadgeHtml(width: 240, alt: 'download_my_app')
+            CompanionApplication::make('com.example', Platform::Android)
+                ->setStoreOptions(region: 'en')
+                ->getStoreBadgeHtml(width: 240, alt: 'download_my_app')
         );
     }
 
@@ -107,7 +124,9 @@ class CompanionApplicationTest extends TestCase
 
         $this->assertEquals(
             '<a target="_blank" href="https://apps.apple.com/en/app/example_app/id123456789"><img src="https://foo.bar/app_store_badge.svg" width="180" alt="" /></a>',
-            CompanionApplication::make('com.example', Platform::Apple)->setStoreOptions('123456789', 'example_app')->getStoreBadgeHtml()
+            CompanionApplication::make('com.example', Platform::Apple)
+                ->setStoreOptions('123456789', 'example_app')
+                ->getStoreBadgeHtml()
         );
     }
 
@@ -117,7 +136,9 @@ class CompanionApplicationTest extends TestCase
 
         $this->assertEquals(
             '<a target="_blank" href="https://apps.apple.com/en/app/example_app/id123456789"><img src="https://foo.bar/en/app_store_badge.svg" width="180" alt="" /></a>',
-            CompanionApplication::make('com.example', Platform::Apple)->setStoreOptions('123456789', 'example_app')->getStoreBadgeHtml()
+            CompanionApplication::make('com.example', Platform::Apple)
+                ->setStoreOptions('123456789', 'example_app')
+                ->getStoreBadgeHtml()
         );
     }
 }
