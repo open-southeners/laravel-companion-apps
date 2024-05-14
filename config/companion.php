@@ -42,8 +42,7 @@ return [
          *
          * Add {region} in case you want to manage multiple badges across multiple regions (locales).
          *
-         * Static badge url: asset('app_store_badge.svg')
-         * Using Laravel helper functions: asset('app_store/{region}/black_badge.svg')
+         * Static URL (from public/ folder): 'app_store/{region}/black_badge.svg'
          * Or just a string as external img: https://cdn.my_host.com/app_store/{region}/black_badge.svg
          */
         'apple_badge_url' => 'https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg',
@@ -56,8 +55,7 @@ return [
          *
          * Add {region} in case you want to manage multiple badges across multiple regions (locales).
          *
-         * Static badge url: asset('play_store_badge.svg')
-         * Using Laravel helper functions: asset('play_store/{region}/black_badge.svg')
+         * Static URL (from public/ folder): 'play_store/{region}/black_badge.svg'
          * Or just a string as external img: https://cdn.my_host.com/play_store/{region}/black_badge.svg
          */
          'android_badge_url' => 'https://play.google.com/intl/en_us/badges/static/images/badges/{region}_badge_web_generic.png',

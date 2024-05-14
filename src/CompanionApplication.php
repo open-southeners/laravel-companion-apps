@@ -4,6 +4,7 @@ namespace OpenSoutheners\LaravelCompanionApps;
 
 use chillerlan\QRCode\QRCode;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class CompanionApplication
 {
@@ -144,6 +145,10 @@ class CompanionApplication
         /** @var string $appStoreBadgeUrl */
         $appStoreBadgeUrl = config("companion.store.{$platform}_badge_url");
 
+        if (Str::startsWith($appStoreBadgeUrl, 'http')) {
+            $appStoreBadgeUrl = asset($appStoreBadgeUrl);
+        }
+
         return str_replace('{region}', $this->storeRegion(), $appStoreBadgeUrl);
     }
 
@@ -171,7 +176,7 @@ class CompanionApplication
     /**
      * Get application store link as QR code.
      */
-    public function getStoreQrCode(): string
+    public function getStoreQrCode()
     {
         return (new QRCode())->render($this->getStoreLink());
     }
