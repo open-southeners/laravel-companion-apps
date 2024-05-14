@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2024-05-14
+
+### Changed
+
+- Config values under `companion.store` added and/or changed, recommended to remove and publish it again
+
+### Fixed
+
+- Default values on applications store related methods
+
+### Added
+
+- Support for Laravel 11
+- `getStoreQrCode` application method to get QR code that links to the store URL
+
 ## [1.0.0] - 2024-01-11
 
 ### Added
