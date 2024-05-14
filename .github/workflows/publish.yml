@@ -19,7 +19,7 @@ jobs:
           version: latest
 
       - name: Publish to Github releases
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.query-release-info.outputs.release-notes }}
           # prerelease: true
