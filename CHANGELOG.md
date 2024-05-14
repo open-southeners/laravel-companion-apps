@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2024-05-15
+
+### Fixed
+
+- Update docblock preventing fatal error when configuring local assets for badge URLs
+
 ## [2.0.0] - 2024-05-14
 
 ### Changed
