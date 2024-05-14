@@ -3,24 +3,50 @@ name: Publish
 on:
   push:
     tags:
-      - '**'
+      - "**"
 
 jobs:
+  # @see https://stackoverflow.com/a/72959712/8179249
+  check-current-branch:
+    runs-on: ubuntu-latest
+
+    outputs:
+      branch: ${{ steps.check_step.outputs.branch }}
+
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏗 Get current branch
+        id: check_step
+        run: |
+          raw=$(git branch -r --contains ${{ github.ref }})
+          branch="$(echo ${raw//origin\//} | tr -d '\n')"
+          echo "{name}=branch" >> $GITHUB_OUTPUT
+          echo "Branches where this tag exists : $branch."
+
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Get release info
+    needs: check-current-branch
+
+    steps:
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🏗 Get release info
         id: query-release-info
-        uses: release-flow/keep-a-changelog-action@v2
+        uses: release-flow/keep-a-changelog-action@v3
         with:
           command: query
           version: latest
 
-      - name: Publish to Github releases
-        uses: softprops/action-gh-release@v1
+      - name: 🚀 Publish to Github releases
+        uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.query-release-info.outputs.release-notes }}
+          make_latest: contains(${{ needs.check.outputs.branch }}, 'main')
           # prerelease: true
           # files: '*.vsix'

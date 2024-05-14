@@ -1,6 +1,6 @@
 name: pint
 
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 jobs:
   analyze:
@@ -9,14 +9,15 @@ jobs:
     name: Laravel Pint
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: 🏗 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: "8.3"
           coverage: none
           tools: laravel/pint
 
-      - name: Run analysis
+      - name: 🧪 Analyse code
         run: pint

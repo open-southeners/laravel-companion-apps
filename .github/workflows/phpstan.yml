@@ -1,6 +1,6 @@
 name: phpstan
 
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 jobs:
   analyze:
@@ -9,28 +9,29 @@ jobs:
     name: PHPStan
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 🏗 Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: 🏗 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: "8.3"
           coverage: none
           tools: phpstan
 
-      - name: Get composer cache directory
+      - name: 🏗 Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
+      - name: 🏗 Cache dependencies
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: phpstan-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: phpstan-composer-
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: composer install --no-interaction --no-suggest
 
-      - name: Run analysis
+      - name: 🧪 Analyse code
         run: phpstan analyse

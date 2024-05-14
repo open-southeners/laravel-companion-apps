@@ -10,5 +10,3 @@ parameters:
 
     excludePaths:
         - src/Redirector.php
-
-    checkMissingIterableValueType: false

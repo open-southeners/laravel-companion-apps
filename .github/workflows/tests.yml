@@ -11,51 +11,53 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php: [8.1, 8.2, 8.3]
+        stability: [prefer-stable]
         laravel: [10.*, 11.*]
-        dependency-version: [prefer-stable]
         include:
           - laravel: 10.*
             testbench: 8.*
 
           - laravel: 11.*
             testbench: 9.*
+        exclude:
+          - php: 8.1
+            laravel: 11.*
 
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
-      - name: Checkout code
+      - name: 🏗 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: 🏗 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, exif
           coverage: pcov
 
-      - name: Get composer cache directory
+      - name: 🏗 Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
+      - name: 🏗 Cache dependencies
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-${{ matrix.dependency-version }}-
+          key: dependencies-composer-laravel-${{ matrix.laravel }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: dependencies-composer-laravel-${{ matrix.laravel }}-
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+          composer update --prefer-dist --no-interaction --no-progress --${{ matrix.stability }}
 
-      - name: Execute tests
+      - name: 🧪 Execute tests
         run: vendor/bin/phpunit -c phpunit.coverage.dist.xml
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+      - name: 🚀 Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./clover.xml
           fail_ci_if_error: true
-          verbose: true
+          # verbose: true
