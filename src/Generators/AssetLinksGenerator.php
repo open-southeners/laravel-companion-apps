@@ -14,13 +14,13 @@ final class AssetLinksGenerator
         protected readonly array $apps,
         protected readonly array $fingerprints = []
     ) {
-        // 
+        //
     }
 
     /**
      * Get asset link for application.
-     * 
-     * @return array<string, array>
+     *
+     * @return array<string, array<int|string, array<string>|string>>
      */
     private function assetLinkFor(CompanionApplication $app): array
     {
@@ -38,8 +38,8 @@ final class AssetLinksGenerator
 
     /**
      * Generate array with file contents structure.
-     * 
-     * @return array<array<string, array>>
+     *
+     * @return array<array<string, array<int|string, array<string>|string>>>
      */
     final public function generate(): array
     {

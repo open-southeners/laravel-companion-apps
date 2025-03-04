@@ -9,6 +9,9 @@ use OpenSoutheners\LaravelCompanionApps\Support\Facades\Companion;
 
 class ManifestGenerator
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(protected array $options = [])
     {
         $this->options = array_merge($this->options, [
@@ -31,7 +34,7 @@ class ManifestGenerator
     }
 
     /**
-     * @return array<string>
+     * @return array<string, mixed>
      */
     public function generate(): array
     {
