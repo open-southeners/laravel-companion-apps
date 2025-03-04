@@ -10,18 +10,15 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.1, 8.2, 8.3]
+        php: [8.2, 8.3, 8.4]
         stability: [prefer-stable]
-        laravel: [10.*, 11.*]
+        laravel: [11.*, 12.*]
         include:
-          - laravel: 10.*
-            testbench: 8.*
-
           - laravel: 11.*
             testbench: 9.*
-        exclude:
-          - php: 8.1
-            laravel: 11.*
+
+          - laravel: 12.*
+            testbench: 10.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -55,9 +52,10 @@ jobs:
         run: vendor/bin/phpunit -c phpunit.coverage.dist.xml
 
       - name: 🚀 Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          flags: php${{ matrix.php }}-laravel${{ matrix.laravel }}
           files: ./clover.xml
           fail_ci_if_error: true
           # verbose: true
