@@ -10,21 +10,27 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.2, 8.3, 8.4]
+        php: [8.2, 8.3, 8.4, 8.5]
         stability: [prefer-stable]
-        laravel: [11.*, 12.*]
+        laravel: [11.*, 12.*, 13.*]
+        exclude:
+          - php: 8.2
+            laravel: 13.*
         include:
           - laravel: 11.*
             testbench: 9.*
 
           - laravel: 12.*
             testbench: 10.*
+            
+          - laravel: 13.*
+            testbench: 11.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: 🏗 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🏗 Setup PHP
         uses: shivammathur/setup-php@v2
@@ -37,7 +43,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: 🏗 Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: dependencies-composer-laravel-${{ matrix.laravel }}-${{ hashFiles('**/composer.lock') }}
@@ -52,7 +58,7 @@ jobs:
         run: vendor/bin/phpunit -c phpunit.coverage.dist.xml
 
       - name: 🚀 Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: php${{ matrix.php }}-laravel${{ matrix.laravel }}
