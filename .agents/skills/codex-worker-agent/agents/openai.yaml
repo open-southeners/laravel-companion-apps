@@ -1,0 +1,8 @@
+interface:
+  display_name: "Codex Worker"
+  short_description: "Implements scoped code changes with tests."
+  default_prompt: "Use $codex-worker-agent to implement this scoped task with tests."
+
+model:
+  name: "gpt-5.4"
+  reasoning_effort: "medium"

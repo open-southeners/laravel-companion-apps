@@ -70,4 +70,21 @@ class CompanionTest extends TestCase
             $metaTags
         );
     }
+
+    public function test_companion_pwa_tags_gets_string_of_html_tags()
+    {
+        config([
+            'companion.pwa.manifest_path' => '/site.webmanifest',
+            'companion.pwa.theme_color' => '#123456',
+            'companion.pwa.tags.apple_mobile_web_app_title' => 'Example',
+            'companion.pwa.tags.apple_mobile_web_app_status_bar_style' => 'black-translucent',
+        ]);
+
+        $tags = Companion::pwaTags();
+
+        $this->assertStringContainsString('<link rel="manifest" href="'.asset('/site.webmanifest').'">', $tags);
+        $this->assertStringContainsString('<meta name="theme-color" content="#123456">', $tags);
+        $this->assertStringContainsString('<meta name="apple-mobile-web-app-title" content="Example">', $tags);
+        $this->assertStringContainsString('<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">', $tags);
+    }
 }

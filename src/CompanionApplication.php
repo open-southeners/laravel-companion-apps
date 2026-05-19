@@ -176,8 +176,10 @@ class CompanionApplication
     /**
      * Get application store link as QR code.
      */
-    public function getStoreQrCode()
+    public function getStoreQrCode(): string
     {
-        return (new QRCode())->render($this->getStoreLink());
+        $qrCode = (new QRCode())->render($this->getStoreLink());
+
+        return is_string($qrCode) ? $qrCode : '';
     }
 }

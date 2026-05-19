@@ -1,0 +1,8 @@
+interface:
+  display_name: "Codex Committer"
+  short_description: "Reviews diffs, verifies changes, and prepares commits."
+  default_prompt: "Use $codex-committer-agent to review, verify, stage, and commit the completed work."
+
+model:
+  name: "gpt-5.4-mini"
+  reasoning_effort: "medium"

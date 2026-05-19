@@ -10,7 +10,7 @@ namespace OpenSoutheners\LaravelCompanionApps\Generators;
 final class AppleAppSiteAssociationGenerator
 {
     /**
-     * @param array<string, array<string, string>> $apps
+     * @param array<string, list<string>> $apps
      */
     public function __construct(
         protected readonly array $apps
@@ -20,6 +20,9 @@ final class AppleAppSiteAssociationGenerator
 
     /**
      * Get app links part to the site association.
+     */
+    /**
+     * @return array{applinks: array{apps: array<int, string>, details: array<int, array{appID: string, paths: array<int, string>}>}}
      */
     private function getAppLinks(): array
     {
@@ -35,6 +38,9 @@ final class AppleAppSiteAssociationGenerator
         return ['applinks' => $appLinksArr];
     }
 
+    /**
+     * @return array{applinks: array{apps: array<int, string>, details: array<int, array{appID: string, paths: array<int, string>}>}}
+     */
     final public function generate(): array
     {
         // TODO: activitycontinuation?

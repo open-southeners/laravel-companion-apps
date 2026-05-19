@@ -32,6 +32,12 @@ This command will ask some questions like list of SHA2 certificate fingerprints 
 
 And at the end will ask for generate a manifest.json for your Laravel web app which will recommend the user to any of the applications registered whenever the devices matches a criteria. [Learn more here](https://developer.mozilla.org/en-US/docs/Web/Manifest/related\_applications).
 
+You can also inspect the current generated files and manifest basics with:
+
+```bash
+php artisan app:companion:doctor
+```
+
 At the end you should have the following files on your public folder (this also configurable through `config/companion.php`):
 
 <figure><img src=".gitbook/assets/image.png" alt="" width="375"><figcaption></figcaption></figure>
@@ -78,6 +84,22 @@ class UserController extends Controller
         );
     }
 }
+```
+
+If you are building an Android intent link directly, add the browser fallback URL on the intent itself:
+
+```php
+return Companion::android('com.example')
+    ->link("users/{$user->id}")
+    ->fallbackUrl('https://my_laravel_app.com/our_apps');
+```
+
+Or use the registered store URL as the fallback:
+
+```php
+return Companion::android('com.example')
+    ->link("users/{$user->id}")
+    ->fallbackToStore();
 ```
 
 ## Adding smart banner

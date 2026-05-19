@@ -11,8 +11,9 @@ Extend your Laravel applications with companions apps (Android, Apple, Progressi
     - Generates app links (`Companion::android('com.my_company.my_app')->link('products/1')`)
 - Allow app links (also called [universal links](https://developer.apple.com/documentation/xcode/supporting-universal-links-in-your-app)) on iOS apps:
     - Generates the `apple-app-site-association` file for app links verification
-    - Redirects to app links (`redirect()->toApp(Companion::ios('com.my_company.my_app'))` or `Companion::ios('com.my_company.my_app')->redirect('products/1')`)
-    - Generates app links (`Companion::ios('com.my_company.my_app')->link('products/1')->fallbackToStore()`)
+    - Redirects to app links (`redirect()->toApp(Companion::apple('com.my_company.my_app'))`)
+    - Generates app links (`Companion::apple('com.my_company.my_app')->link('products/1')->fallbackToStore()`)
+    - Adds a custom browser fallback URL when needed (`Companion::android('com.my_company.my_app')->link('products/1')->fallbackUrl('https://example.com/download')`)
 - Add smart banner (**Apple only for now**) using Blade directive `@companionMetaTags` or facade's method `app('companion')->metaTags()`
 
 ## Getting started

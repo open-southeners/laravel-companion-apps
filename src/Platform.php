@@ -12,7 +12,7 @@ enum Platform
     #[PlatformStore('itunes')]
     case Apple;
 
-    #[PlatformStore('windows')]
+    #[PlatformStore('webapp')]
     case Web;
 
     public function getStore(): string

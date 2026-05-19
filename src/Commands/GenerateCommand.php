@@ -9,6 +9,7 @@ use Illuminate\Filesystem\FilesystemManager;
 use OpenSoutheners\LaravelCompanionApps\Generators\AppleAppSiteAssociationGenerator;
 use OpenSoutheners\LaravelCompanionApps\Generators\AssetLinksGenerator;
 use OpenSoutheners\LaravelCompanionApps\Generators\ManifestGenerator;
+use OpenSoutheners\LaravelCompanionApps\Generators\ServiceWorkerGenerator;
 use OpenSoutheners\LaravelCompanionApps\Support\Facades\Companion;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\text;
@@ -27,12 +28,12 @@ class GenerateCommand extends Command
     /**
      * The console command description.
      *
-     * @var string|null
+     * @var string
      */
     protected $description = 'Generate companion applications links verification files';
 
     /**
-     * @var array<string, array>
+     * @var array<string, array<mixed>|string>
      */
     protected array $files = [];
 
@@ -57,18 +58,41 @@ class GenerateCommand extends Command
 
     public function handle(): int
     {
-        if (count(Companion::list()) === 0) {
-            $this->warn('No apps registered, please register one first before running this command.');
+        $hasAndroidApps = count(Companion::listByPlatform(Platform::Android)) > 0;
+        $hasAppleApps = count(Companion::listByPlatform(Platform::Apple)) > 0;
+
+        if (! $hasAndroidApps && ! $hasAppleApps && $this->option('no-manifest') && ! $this->option('service-worker')) {
+            $this->warn('No apps registered and no PWA files requested.');
 
             return 1;
         }
 
-        $this->assetLinksFile();
-        $this->appleAppSiteAssociationFile();
+        if ($hasAndroidApps) {
+            $this->assetLinksFile();
+        }
+
+        if ($hasAppleApps) {
+            $this->appleAppSiteAssociationFile();
+        }
+
         $hasManifest = $this->webManifestFile();
+        $hasServiceWorker = $this->serviceWorkerFile();
+
+        if ($this->files === []) {
+            $this->warn('No companion app files were generated.');
+
+            return 1;
+        }
+
         $this->createFiles();
 
-        $this->info(sprintf('App links%s files sucessfully written!', $hasManifest ? ' and web manifest' : ''));
+        $generatedFiles = array_filter([
+            ($hasAndroidApps || $hasAppleApps) ? 'app links' : null,
+            $hasManifest ? 'web manifest' : null,
+            $hasServiceWorker ? 'service worker' : null,
+        ]);
+
+        $this->info(sprintf('%s files successfully written!', ucfirst($this->humanizeGeneratedFiles($generatedFiles))));
 
         return 0;
     }
@@ -76,20 +100,46 @@ class GenerateCommand extends Command
     protected function createFiles(): void
     {
         foreach ($this->files as $filePath => $fileContent) {
-            $jsonFileContent = json_encode($fileContent, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            $content = is_string($fileContent)
+                ? $fileContent
+                : json_encode($fileContent, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
-            if (! $jsonFileContent) {
+            if (! $content) {
                 continue;
             }
 
-            $this->outputComponents()->task($filePath, function () use ($filePath, $jsonFileContent) {
-                $this->filesystem->makeDirectory(Str::beforeLast($filePath, '/'));
+            $this->outputComponents()->task($filePath, function () use ($filePath, $content) {
+                $directory = Str::beforeLast($filePath, '/');
+
+                if ($directory !== '') {
+                    $this->filesystem->makeDirectory($directory);
+                }
     
-                $this->filesystem->put($filePath, $jsonFileContent);
+                $this->filesystem->put($filePath, $content);
 
                 $this->outputComponents()->info('File created successfully');
             });
         }
+    }
+
+    /**
+     * @param  array<int, string>  $generatedFiles
+     */
+    protected function humanizeGeneratedFiles(array $generatedFiles): string
+    {
+        $count = count($generatedFiles);
+
+        if ($count <= 1) {
+            return $generatedFiles[0] ?? 'Files';
+        }
+
+        if ($count === 2) {
+            return implode(' and ', $generatedFiles);
+        }
+
+        $lastFile = array_pop($generatedFiles);
+
+        return implode(', ', $generatedFiles).' and '.$lastFile;
     }
 
     protected function webManifestFile(): bool
@@ -98,7 +148,7 @@ class GenerateCommand extends Command
             return false;
         }
 
-        $manifestOptions = $this->option('manifest-options') ?? '';
+        $manifestOptions = $this->optionString('manifest-options');
 
         $generator = new ManifestGenerator;
 
@@ -106,7 +156,22 @@ class GenerateCommand extends Command
             ->preferRelatedApplications(str_contains($manifestOptions, 'related_apps'))
             ->generate();
 
-        $this->files[config('companion.files.base_path', 'public').'/manifest.json'] = $manifestArr;
+        $this->files[$this->basePath().'/manifest.json'] = $manifestArr;
+
+        return true;
+    }
+
+    protected function serviceWorkerFile(): bool
+    {
+        if (! $this->option('service-worker')) {
+            return false;
+        }
+
+        $generator = new ServiceWorkerGenerator;
+
+        $serviceWorkerPath = $this->configString('companion.pwa.service_worker.path', '/service-worker.js');
+
+        $this->files[$this->basePath().'/'.ltrim($serviceWorkerPath, '/')] = $generator->generate();
 
         return true;
     }
@@ -126,7 +191,7 @@ class GenerateCommand extends Command
 
         $generator = new AssetLinksGenerator($apps, $fingerprints);
 
-        $this->files[config('companion.files.base_path', 'public').'/.well-known/assetlinks.json'] = $generator->generate();
+        $this->files[$this->basePath().'/.well-known/assetlinks.json'] = $generator->generate();
     }
 
     /**
@@ -135,10 +200,11 @@ class GenerateCommand extends Command
     protected function appleAppSiteAssociationFile(): void
     {
         $apps = Companion::listByPlatform(Platform::Apple);
+        /** @var array<string, list<string>> $appPathsArr */
         $appPathsArr = [];
 
         foreach ($apps as $name => $app) {
-            $appPathsArr[$name] = explode(',', text(
+            $appPathsArr[(string) $name] = explode(',', text(
                 label: "Comma separated associated paths to site for Apple's application ({$name})",
                 required: true
             ));
@@ -146,19 +212,39 @@ class GenerateCommand extends Command
 
         $generator = new AppleAppSiteAssociationGenerator($appPathsArr);
 
-        $this->files[config('companion.files.base_path', 'public').'/.well-known/apple-app-site-association'] = $generator->generate();
+        $this->files[$this->basePath().'/.well-known/apple-app-site-association'] = $generator->generate();
+    }
+
+    protected function basePath(): string
+    {
+        return $this->configString('companion.files.base_path', 'public');
+    }
+
+    protected function optionString(string $key, string $default = ''): string
+    {
+        $value = $this->option($key);
+
+        return is_scalar($value) ? (string) $value : $default;
+    }
+
+    protected function configString(string $key, string $default): string
+    {
+        $value = config($key, $default);
+
+        return is_scalar($value) ? (string) $value : $default;
     }
 
     /**
      * Get the console command options.
      *
-     * @return array
+     * @return array<int, array<int, int|string>>
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return [
             ['no-manifest', '', InputOption::VALUE_NONE, 'Do not generate manifest.json for your web application'],
             ['manifest-options', '', InputOption::VALUE_OPTIONAL, 'Comma separated list of options for the generation of your manifest'],
+            ['service-worker', '', InputOption::VALUE_NONE, 'Generate a service worker for your web application'],
         ];
     }
 }

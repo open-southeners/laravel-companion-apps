@@ -68,6 +68,22 @@ class CompanionApplicationTest extends TestCase
         );
     }
 
+    public function test_companion_app_link_redirects_with_store_fallback()
+    {
+        ServiceProvider::loadApplications([
+            CompanionApplication::make('com.example', Platform::Android)->linkScheme('example')
+        ]);
+
+        $intent = Companion::android('com.example')
+            ->link('foo/bar')
+            ->fallbackToStore();
+
+        $this->assertStringContainsString(
+            'S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.example;',
+            (string) $intent
+        );
+    }
+
     public function test_companion_app_get_store_platform()
     {
         $this->assertEquals('play', CompanionApplication::make('com.example', Platform::Android)->getPlatformStore());

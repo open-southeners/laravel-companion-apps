@@ -13,15 +13,16 @@ class GenerateCommandTest extends TestCase
 
     protected $files = [
         'public/.well-known/assetlinks.json',
-        'public/.well-known/apple_app_site_association',
+        'public/.well-known/apple-app-site-association',
         'public/manifest.json',
+        'public/service-worker.js',
     ];
 
     public function test_generate_command_generates_nothing_when_no_apps_registered_found()
     {
-        $command = $this->artisan('app:companion:generate');
+        $command = $this->artisan('app:companion:generate', ['--no-manifest' => true]);
 
-        $command->expectsOutput('No apps registered, please register one first before running this command.');
+        $command->expectsOutput('No apps registered and no PWA files requested.');
 
         $exitCode = $command->run();
 
@@ -30,6 +31,7 @@ class GenerateCommandTest extends TestCase
         $this->assertFileDoesNotExist($this->files[0]);
         $this->assertFileDoesNotExist($this->files[1]);
         $this->assertFileDoesNotExist($this->files[2]);
+        $this->assertFileDoesNotExist($this->files[3]);
     }
 
     public function test_generate_command_with_no_manifest_option_does_not_generate_manifest_file()
@@ -50,7 +52,7 @@ class GenerateCommandTest extends TestCase
         $command->expectsQuestion('Comma separated associated paths to site for Apple\'s application (com.example)', '/foo/*');
         $command->expectsQuestion('Comma separated associated paths to site for Apple\'s application (com.example_dev)', '/foo/*');
 
-        $command->expectsOutput('App links files sucessfully written!');
+        $command->expectsOutputToContain('App links files successfully written!');
 
         $exitCode = $command->run();
 
@@ -79,6 +81,21 @@ class GenerateCommandTest extends TestCase
         ], 'public/.well-known/apple-app-site-association');
 
         $this->assertFileDoesNotExist($this->files[2]);
+    }
+
+    public function test_generate_command_can_generate_manifest_without_native_apps()
+    {
+        $command = $this->artisan('app:companion:generate');
+
+        $command->expectsConfirmation('Do you want to generate a manifest for your Laravel app?', 'yes');
+        $exitCode = $command->run();
+
+        $this->assertEquals(0, $exitCode);
+
+        $this->assertFileContains([
+            '"name": "Laravel",',
+            '"related_applications": []',
+        ], 'public/manifest.json');
     }
 
     public function test_generate_command_generates_all_three_files()
@@ -100,7 +117,7 @@ class GenerateCommandTest extends TestCase
         $command->expectsQuestion('Comma separated associated paths to site for Apple\'s application (com.example_dev)', '/foo/*');
         $command->expectsConfirmation('Do you want to generate a manifest for your Laravel app?', 'yes');
 
-        $command->expectsOutput('App links and web manifest files sucessfully written!');
+        $command->expectsOutputToContain('App links and web manifest files successfully written!');
 
         $exitCode = $command->run();
 
@@ -129,6 +146,11 @@ class GenerateCommandTest extends TestCase
         ], 'public/.well-known/apple-app-site-association');
 
         $this->assertFileContains([
+            '"start_url": "/",',
+            '"scope": "/",',
+            '"display": "standalone",',
+            '"theme_color": "#111827",',
+            '"background_color": "#ffffff",',
             '"prefer_related_applications": false,',
             '"related_applications": [',
             '"platform": "play",',
@@ -137,5 +159,35 @@ class GenerateCommandTest extends TestCase
             '"platform": "itunes",',
             '"url": "https://apps.apple.com/en/app/example-app/id123456789"',
         ], 'public/manifest.json');
+    }
+
+    public function test_generate_command_generates_service_worker_file()
+    {
+        $androidApp = CompanionApplication::make('com.example', Platform::Android);
+        $appleApp = CompanionApplication::make('com.example', Platform::Apple);
+
+        ServiceProvider::loadApplications([$androidApp, $appleApp]);
+
+        $command = $this->artisan('app:companion:generate', [
+            '--no-manifest' => true,
+            '--service-worker' => true,
+        ]);
+
+        $command->expectsQuestion('Introduce comma separated list of SHA2 fingerprints for your Android app (com.example)', 'ab:cd:ef');
+        $command->expectsQuestion('Comma separated associated paths to site for Apple\'s application (com.example)', '/foo/*');
+        $command->expectsOutputToContain('App links and service worker files successfully written!');
+
+        $exitCode = $command->run();
+
+        $this->assertEquals(0, $exitCode);
+
+        $this->assertFileContains([
+            'const CACHE_NAME = "companion-app-v1";',
+            'const OFFLINE_URL = "/offline";',
+            'Promise.allSettled(',
+            "request.mode === 'navigate'",
+            'caches.match(OFFLINE_URL)',
+            'function shouldCacheResponse(response) {',
+        ], 'public/service-worker.js');
     }
 }

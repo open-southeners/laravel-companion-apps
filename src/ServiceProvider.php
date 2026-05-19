@@ -2,7 +2,6 @@
 
 namespace OpenSoutheners\LaravelCompanionApps;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use OpenSoutheners\LaravelCompanionApps\Commands;
@@ -30,9 +29,19 @@ class ServiceProvider extends BaseServiceProvider
             ], 'config');
         }
 
-        Blade::directive('companionMetaTags', function (Application $app): string {
-            return $app->make('companion')->metaTags();
-        });
+        Blade::directive('companionMetaTags', fn (): string => "<?php echo app('companion')->metaTags(); ?>");
+
+        Blade::directive('companionPwaTags', fn (): string => "<?php echo app('companion')->pwaTags(); ?>");
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'companion');
+
+        Blade::component('companion::components.install-button', 'companion-install-button');
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../resources/views' => resource_path('views/vendor/companion'),
+            ], 'companion-views');
+        }
     }
 
     /**
@@ -44,6 +53,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->commands([
             Commands\GenerateCommand::class,
+            Commands\DoctorCommand::class,
         ]);
     }
 

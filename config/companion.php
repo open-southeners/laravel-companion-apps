@@ -62,4 +62,133 @@ return [
 
     ],
 
+    'pwa' => [
+
+        /**
+         * Enable Progressive Web App helpers and manifest generation.
+         */
+        'enabled' => true,
+
+        /**
+         * Web app manifest path exposed from the public root.
+         */
+        'manifest_path' => '/manifest.json',
+
+        /**
+         * Core web app manifest fields.
+         */
+        'name' => env('APP_NAME', 'Laravel'),
+        'short_name' => env('APP_NAME', 'Laravel'),
+        'description' => null,
+        'start_url' => '/',
+        'scope' => '/',
+        'display' => 'standalone',
+        'orientation' => null,
+        'theme_color' => '#111827',
+        'background_color' => '#ffffff',
+
+        /**
+         * Icons used by browsers when installing the web app.
+         */
+        'icons' => [
+            [
+                'src' => '/icons/icon-192.png',
+                'sizes' => '192x192',
+                'type' => 'image/png',
+            ],
+            [
+                'src' => '/icons/icon-512.png',
+                'sizes' => '512x512',
+                'type' => 'image/png',
+            ],
+            [
+                'src' => '/icons/maskable-512.png',
+                'sizes' => '512x512',
+                'type' => 'image/png',
+                'purpose' => 'maskable',
+            ],
+        ],
+
+        /**
+         * Optional manifest enhancements.
+         */
+        'shortcuts' => [],
+        'screenshots' => [],
+        'share_target' => null,
+        'protocol_handlers' => [],
+        'related_applications' => true,
+        'prefer_related_applications' => false,
+
+        /**
+         * Structured manifest and tag config used by the package internals.
+         *
+         * Top-level keys above remain available for backward compatibility.
+         */
+        'manifest' => [
+            'name' => null,
+            'short_name' => null,
+            'description' => null,
+            'id' => null,
+            'start_url' => '/',
+            'scope' => '/',
+            'display' => 'standalone',
+            'orientation' => null,
+            'theme_color' => '#111827',
+            'background_color' => '#ffffff',
+            'lang' => null,
+            'dir' => null,
+            'categories' => [],
+            'icons' => [],
+            'screenshots' => [],
+            'shortcuts' => [],
+            'share_target' => null,
+            'protocol_handlers' => [],
+            'related_applications' => true,
+            'prefer_related_applications' => false,
+        ],
+
+        'tags' => [
+            'theme_color' => null,
+            'mobile_web_app_capable' => true,
+            'apple_mobile_web_app_capable' => true,
+            'apple_mobile_web_app_title' => null,
+            'apple_mobile_web_app_status_bar_style' => 'default',
+            'apple_touch_icons' => [],
+        ],
+
+        /**
+         * Service worker generation settings.
+         */
+        'service_worker' => [
+            'enabled' => false,
+            'path' => '/service-worker.js',
+            'cache_name' => 'companion-app-v1',
+            'offline_url' => '/offline',
+            'precache' => [
+                '/',
+                '/offline',
+                '/manifest.json',
+            ],
+            'asset_patterns' => [
+                '/build/',
+                '/css/',
+                '/js/',
+                '/images/',
+                '/icons/',
+            ],
+        ],
+
+        /**
+         * Default Blade view applications can use for an offline fallback route.
+         */
+        'offline_view' => 'companion::offline',
+
+        /**
+         * Apple-specific install metadata.
+         */
+        'apple_touch_icon' => '/icons/apple-touch-icon.png',
+        'apple_mobile_web_app_capable' => true,
+
+    ],
+
 ];

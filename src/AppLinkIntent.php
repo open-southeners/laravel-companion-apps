@@ -25,6 +25,14 @@ class AppLinkIntent implements Responsable
     }
 
     /**
+     * Set the application store URL as fallback.
+     */
+    public function fallbackToStore(): self
+    {
+        return $this->fallbackUrl($this->appLink->app->getStoreLink());
+    }
+
+    /**
      * Create an HTTP response that represents the object.
      *
      * @param  \Illuminate\Http\Request  $request

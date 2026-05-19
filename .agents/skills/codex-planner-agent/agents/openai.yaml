@@ -1,0 +1,8 @@
+interface:
+  display_name: "Codex Planner"
+  short_description: "Plans architecture, sequencing, risks, and tests."
+  default_prompt: "Use $codex-planner-agent to plan this work read-only before implementation."
+
+model:
+  name: "gpt-5.5"
+  reasoning_effort: "high"
