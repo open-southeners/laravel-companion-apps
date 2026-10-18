@@ -50,3 +50,22 @@ jobs:
           make_latest: contains(${{ needs.check.outputs.branch }}, 'main')
           # prerelease: true
           # files: '*.vsix'
+
+  announce:
+    needs: build
+    if: ${{ !contains(github.ref_name, '-') }}
+    permissions:
+      contents: read
+    uses: Pepebits/release-announce/.github/workflows/announce.yml@v1
+    with:
+      tag: ${{ github.ref_name }}
+      notes_source: changelog
+      banner_url: https://opensoutheners.com/gh_card/{repo}
+      install_title: 📦 Composer
+      install_command: composer require open-southeners/laravel-companion-apps:^{minor}
+      buttons: >-
+        [{"text": "📝 Notes", "url": "{repo_url}/releases/tag/{tag}"},
+         {"text": "📦 Packagist", "url": "https://packagist.org/packages/open-southeners/laravel-companion-apps"}]
+    secrets:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
